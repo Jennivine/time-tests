@@ -22,7 +22,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pytest
           python -m pip install requests
-          python -m pip install yaml
+          python -m pip install pyyaml
       - name: Test with pytest
         run: |
           pytest

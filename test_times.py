@@ -1,4 +1,6 @@
-from times import compute_overlap_time, time_range
+from times import compute_overlap_time, time_range, iss_passes
+from unittest.mock import patch
+import requests
 import pytest
 import yaml
 
@@ -27,3 +29,14 @@ for case in data:
 @pytest.mark.parametrize("time_1,time_2,expected", test_data)
 def test_positive_eval(time_1, time_2, expected):
     assert(compute_overlap_time(time_1, time_2) == expected)
+
+def test_mock_iss_data():
+    with patch.object(requests,'get') as mock_get:
+        output_passes = iss_passes()
+        mock_get.assert_called_with(
+            'https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/56/0/0/5/50',
+            params={
+                'apiKey': '33Q884-HFUV8K-SCS3LG-55CU'
+            }
+        )
+        

@@ -1,4 +1,24 @@
 import datetime
+import requests
+
+def iss_passes():
+    response = requests.get(
+        "https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/56/0/0/5/50",
+        params={'apiKey': "33Q884-HFUV8K-SCS3LG-55CU"}
+    )
+    
+    text = response.json()
+    total_n_passes = text['info']['passescount']
+    passes = []
+    for i in range(total_n_passes):
+        iss_pass = text['passes'][i]
+        passes.append((datetime.datetime.fromtimestamp(iss_pass['startUTC']), 
+                      datetime.datetime.fromtimestamp(iss_pass['endUTC'])))
+        
+    output_passes = [(ta.strftime("%Y-%m-%d %H:%M:%S"), tb.strftime("%Y-%m-%d %H:%M:%S")) for ta, tb in passes]
+        
+    return output_passes
+
 
 def time_range(start_time, end_time, number_of_intervals=1, gap_between_intervals_s=0):
     start_time_s = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
@@ -25,7 +45,8 @@ def compute_overlap_time(range1, range2):
                 
     return overlap_time
 
-if __name__ == "__main__":
-    large = time_range("2010-01-12 10:00:00", "2010-01-12 12:00:00")
-    short = time_range("2010-01-12 10:30:00", "2010-01-12 10:45:00", 2, 60)
-    print(compute_overlap_time(large, short))
+if __name__ == '__main__':
+    from unittest.mock import patch
+    with patch.object(requests,'get') as mock_get:
+        output_passes = iss_passes()
+        print(mock_get.mock_calls)

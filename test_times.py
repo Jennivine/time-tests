@@ -1,4 +1,9 @@
 from times import compute_overlap_time, time_range
+from pytest import raises
+
+def test_backwards_interval():
+    with raises(ValueError):
+        time_range("2010-01-12 12:00:00", "2010-01-12 10:00:00")
 
 def test_given_input():
     large = time_range("2010-01-12 10:00:00", "2010-01-12 12:00:00")
